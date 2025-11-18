@@ -133,12 +133,16 @@ def filtrar_paises(paises):  #Filtar Paises por Continente,rango de poblacion o 
     print("\n---Paises Filtados---")
     mostrar_lista_paises(paises_filtrados)
 
-def ordenar_paises(paises):  #Ordenar los paises ascendente
+def ordenar_paises(paises): #Ordena paises en forma ascendente
+    if not paises:
+        print("El catálogo está vacío")
+        return
+    print("\n***Opciones de ordenamiento ascendente***")
     print("\n---Opciones de ordenamiento ascendente---")
     print("1) Ordenar por nombre")
     print("2) Ordenar por poblacion")
     print("3) Ordenar por superficie")
-    opcion_orden=obtener_input("Seleccione la opocion de ordenamiento: ",tipo=int)
+    opcion_orden=obtener_input("Seleccione la opción de ordenamiento: ",tipo=int)
     clave_orden=None
     if opcion_orden==1:
         clave_orden='Nombre'
@@ -147,39 +151,34 @@ def ordenar_paises(paises):  #Ordenar los paises ascendente
     elif opcion_orden==3:
         clave_orden='Superficie'
     else:
-        print("Opcion de ordenamiento invalida")
+        print("Opción de ordenamiento inválida")
         return
-    def obtener_nombre(pais_dict):   #funcion para ordenar por nombre
-        return pais_dict['Nombre']
-    def obtener_poblacion(pais_dict): #funcion para ordenar por poblacion
-        return pais_dict['Poblacion']
-    def obtener_superficie(pais_dict):  #funcion para ordenar por superficie
-        return pais_dict['Superficie']
-    funcion_key=None   #asignar la función correcta
-    if clave_orden=='Nombre':
-        funcion_key=obtener_nombre
-    elif clave_orden=='Poblacion':
-        funcion_key=obtener_poblacion
-    elif clave_orden=='Superficie':
-        funcion_key=obtener_superficie
-    paises_ordenados=list(paises)    #creamos una copia temporal para evitar modificar el orden que tenia
-    paises_ordenados.sort(key=funcion_key,reverse=False)
-    print(f"\n---Paises ordenados por {clave_orden}---")
-    mostrar_lista_paises(paises_ordenados)
+    lista_a_ordenar=list(paises)
+    n=len(lista_a_ordenar)
+    for i in range(n):   #bucle interno realiza las comparaciones y los intercambios
+        for j in range(0,n-i-1):
+            if lista_a_ordenar[j][clave_orden]>lista_a_ordenar[j+1][clave_orden]: #comparacion de los valores de la clave
+                lista_a_ordenar[j],lista_a_ordenar[j+1]=lista_a_ordenar[j+1],lista_a_ordenar[j] #realiza el intercambio
+    print(f"\n***Paises ordenados por {clave_orden}***")
+    mostrar_lista_paises(lista_a_ordenar)
 
-
-def mostrar_estadisticas(paises):   #Mostrar estadisticas
+def mostrar_estadisticas(paises):   #Mostrar estadísticas
     if not paises:
-        print("No hay datos para generar estadisticas")
+        print("El catálogo está vacio. No hay estadísticas para mostrar")
         return
-    def obtener_poblacion_key(pais_dict):
-        return pais_dict['Poblacion']
-    def obtener_superficie_key(pais_dict):
-        return pais_dict['Superficie']
-    pais_mayor_pob=max(paises,key=obtener_poblacion_key)  #pais mayor poblacion
-    pais_menor_pob=min(paises,key=obtener_poblacion_key)   #pais menor poblacion
-    pais_mayor_sup=max(paises,key=obtener_superficie_key)  #pais mayor superficie
-    pais_menor_sup=min(paises,key=obtener_superficie_key)  #pais menor superficie
+    pais_mayor_pob=paises[0]   #inicialización asignamos el 1° país como el extremo
+    pais_menor_pob=paises[0]
+    pais_mayor_sup=paises[0]
+    pais_menor_sup=paises[0]
+    for pais in paises:   #bucle para encontrar los extremos
+        if pais['Poblacion']>pais_mayor_pob['Poblacion']:  #lógica para poblacion
+            pais_mayor_pob=pais
+        if pais['Poblacion']<pais_menor_pob['Poblacion']:
+            pais_menor_pob=pais
+        if pais['Superficie']>pais_mayor_sup['Superficie']: #lógica para superficie
+            pais_mayor_sup=pais
+        if pais['Superficie']<pais_menor_sup['Superficie']:
+            pais_menor_sup=pais
     print("\n---Estadisticas---")
     print(f"Pais con mayor poblacion: {pais_mayor_pob['Nombre']}({pais_mayor_pob['Poblacion']:,} hab)")
     print(f"Pais con menor poblacion: {pais_menor_pob['Nombre']}({pais_menor_pob['Poblacion']:,} hab)")
@@ -204,6 +203,7 @@ def mostrar_estadisticas(paises):   #Mostrar estadisticas
     print("\n Cantidad de paises por continenete:")
     for cont, count in paises_por_continente.items():
         print(f" - {cont}:{count} paises")
+
 
 #Menu principal
 def menu_principal():
